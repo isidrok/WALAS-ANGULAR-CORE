@@ -1,0 +1,42 @@
+{
+  "name": "@walas/angular-vendor",
+  "version": "0.0.0",
+  "description": "Core elements for integration with Angular 4",
+  "main": "dist/core.js",
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "build:dev": "rollup -c rollup.config.dev.js",
+    "deploy": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alfatecsistemas/WALAS-ANGULAR-CORE.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alfatecsistemas/WALAS-ANGULAR-CORE/issues"
+  },
+  "homepage": "https://github.com/Alfatecsistemas/WALAS-ANGULAR-CORE#readme",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-angular2": "0.0.2",
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "eslint": "^4.2.0",
+    "eslint-config-google": "^0.9.1",
+    "rollup": "^0.41.6",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-string": "^2.0.2",
+    "rollup-plugin-uglify": "^1.0.2"
+  },
+  "dependencies": {
+    "@angular/common": "^4.3.1",
+    "@angular/compiler": "^4.3.1",
+    "@angular/core": "^4.3.1",
+    "@angular/forms": "^4.3.1",
+    "@angular/platform-browser": "^4.3.1"
+  }
+}

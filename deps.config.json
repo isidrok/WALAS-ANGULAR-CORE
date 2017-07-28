@@ -1,0 +1,23 @@
+{
+    "globals": {
+        "@angular/common": "Vendor._angular_common",
+        "@angular/common/http": "Vendor._angular_common_http",
+        "@angular/platform-browser": "Vendor._angular_platformBrowser",
+        "@angular/platform-browser-dynamic": "Vendor._angular_platformBrowserDynamic",
+        "@angular/router": "Vendor._angular_router",
+        "@angular/compiler": "Vendor._angular_compiler",
+        "@angular/core": "Vendor._angular_core",
+        "@angular/forms": "Vendor._angular_forms",
+        "afcore": "Core"
+    },
+    "external": [
+        "@angular/common",
+        "@angular/common/http",
+        "@angular/platform-browser",
+        "@angular/platform-browser-dynamic",
+        "@angular/router",
+        "@angular/compiler",
+        "@angular/core",
+        "@angular/forms"
+    ]
+}
