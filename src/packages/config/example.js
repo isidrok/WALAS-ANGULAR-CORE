@@ -9,9 +9,40 @@ const myValidators = {
         return passwordConfirmation === this.password;
     }
 };
+const serverValidations = {
+    'foo': {
+        'summary': [
+
+        ],
+        'email': [
+            {
+                'isEmail': {
+                    'message': 'must be a valid email'
+                }
+            },
+            {
+                'contains': {
+                    'messsage': 'must be .es',
+                    'arguments': [
+                        '.es',
+                    ]
+                }
+            },
+            {
+                'emailDifferentFromPassword': {
+                    'message': 'email must be different from password',
+                    'arguments': [
+                        '$model'
+                    ]
+                }
+            }
+        ]
+    }
+};
 
 const myConfig = {
     validatorLibrary: validatorjs,
-    customValidators: myValidators
+    customValidators: myValidators,
+    validations: serverValidations
 };
 configService.init(myConfig);
