@@ -1,3 +1,3 @@
-export * from './afloader';
-export * from './afloaderprovider';
+export * from './afmoduleloader';
+export * from './afmoduleloaderprovider';
 export * from './routeresolver';

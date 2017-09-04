@@ -8,14 +8,30 @@ import {
 import {ModelService} from '../model';
 import {configService} from '../config';
 
+const VALIDATORS_PROVIDER = {
+    provide: NG_VALIDATORS,
+    useExisting: forwardRef(() => Rule),
+    multi: true
+};
+
+/**
+ * Directive that given a path of the form 'entity.field'
+ * finds its asociated validations in the configService and
+ * using the validators obtained from that same service
+ * creates angular validator functions.
+ * 
+ * It will act as a provider for NG_VALIDATORS.
+ * 
+ * setValidity can be passed as input in order to 
+ * modify the native valid attribute of html inputs.
+ * 
+ * @export
+ * @class Rule
+ */
 @Directive({
     selector: '[rule][ngModel]',
     providers: [
-        {
-            provide: NG_VALIDATORS,
-            useExisting: forwardRef(() => Rule),
-            multi: true
-        }
+        VALIDATORS_PROVIDER
     ]
 })
 export class Rule {
@@ -25,13 +41,23 @@ export class Rule {
         this._modelService = modelService;
     }
     ngOnInit() {
-        if (!this.path) return;
+        if (!this.path) {
+            // Prevent breack due to not yet initialized path.
+            return;
+        }
         this.validationFunctions = this._getValidationFunctions();
     }
     validate(control) {
-        if (!this.path) return;
+        if (!this.path) {
+            // Prevent breack due to not yet initialized path.            
+            return;
+        }
         let errors = Validators.compose(this.validationFunctions)(control);
-        let validity = errors ? false : true;
+        /**
+         * Convert to boolean in order to not pass the whole errors object.
+         * Negate it so the behaviour is errors ? false : true
+         */
+        let validity = !Boolean(errors);
         this.setValidity(validity);
         return errors;
     }

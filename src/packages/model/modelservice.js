@@ -1,4 +1,12 @@
 import {Injectable} from '@walas/angular-vendor';
+
+/**
+ * Service so the validations of a given model
+ * can access all of its properties.
+ * 
+ * @export
+ * @class ModelService
+ */
 @Injectable()
 export class ModelService {
     constructor() {
