@@ -15,4 +15,4 @@ const ALL = [
     exports: ALL,
     declarations: ALL,
 })
-export class Core {}
+export class WalasAngularCore {}
