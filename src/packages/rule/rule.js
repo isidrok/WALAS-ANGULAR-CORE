@@ -53,12 +53,7 @@ export class Rule {
             return;
         }
         let errors = Validators.compose(this.validationFunctions)(control);
-        /**
-         * Convert to boolean in order to not pass the whole errors object.
-         * Negate it so the behaviour is errors ? false : true
-         */
-        let validity = !Boolean(errors);
-        this.setValidity(validity);
+        this.setValidity(!errors);
         return errors;
     }
     _getValidationFunctions() {
@@ -86,7 +81,7 @@ export class Rule {
         return {
             func: validators[validationName],
             args: allArgs.filter((c) => c !== MODEL_KEYWORD),
-            msg: validation.message || 'Validation Error',
+            msg: validation.message || configService.getDefaultValidationError(),
             fromModel: allArgs.includes(MODEL_KEYWORD)
         };
     }

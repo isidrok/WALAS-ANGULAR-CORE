@@ -7,6 +7,7 @@ module.exports = {
         "comma-dangle": 0,
         "linebreak-style": 0,
         "no-invalid-this":0,
-        "eol-last":0
+        "eol-last":0,
+        "valid-jsdoc":0
     }
 };

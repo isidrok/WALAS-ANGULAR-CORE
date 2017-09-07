@@ -2,11 +2,13 @@
   "name": "@walas/angular-core",
   "version": "0.0.0",
   "description": "Core elements for integration with Angular 4",
-  "main": "dist/core.js",
+  "main": "dist/walas_angular_core.js",
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "build:dev": "rollup -c rollup.config.dev.js --watch",
-    "deploy": "npm run build"
+    "build:nomin": "rollup -c rollup.config.nomin.js",
+    "build:depl": "npm-run-all --parallel build build:nomin",
+    "depl": "npm run build:depl"
   },
   "repository": {
     "type": "git",
@@ -21,20 +23,26 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-angular2": "0.0.2",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-es2015-rollup": "^3.0.0",
     "eslint": "^4.2.0",
     "eslint-config-google": "^0.9.1",
+    "npm-run-all": "^4.1.1",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-livereload": "^0.6.0",
     "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-serve": "^0.4.2",
     "rollup-plugin-string": "^2.0.2",
     "rollup-plugin-uglify": "^1.0.2",
     "rollup-watch": "^4.3.1"
   },
   "dependencies": {
     "@walas/angular-vendor": "git+https://github.com/Alfatecsistemas/WALAS-ANGULAR-VENDOR.git",
-    "@walas/angular-vendor-browser": "git+https://github.com/Alfatecsistemas/WALAS-ANGULAR-VENDOR-BROWSER.git"
+    "@walas/angular-vendor-browser": "git+https://github.com/Alfatecsistemas/WALAS-ANGULAR-VENDOR-BROWSER.git",
+    "rollup-plugin-json": "^2.3.0"
   }
 }

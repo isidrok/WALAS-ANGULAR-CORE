@@ -1,26 +1,39 @@
+import {validationDefaults} from './validationdefaults';
 export class ValidationConfig {
+    constructor() {
+        Object.assign(this, validationDefaults);
+    }
     init() {
         this._mergeValidators();
     }
-    getValidations() {
-        return this._config.validations;
+    get validations() {
+        return this._validations;
     }
-    getValidators() {
-        return this._config.validators;
+    set validations(value) {
+        this._validations = value;
     }
-    getModelKeyword() {
-        return this._config.modelKeyword;
+    get validators() {
+        return this._validators;
+    }
+    set validators(value) {
+        this._validators = value;
+    }
+    get modelKeyword() {
+        return this._modelKeyword;
+    }
+    set modelKeyword(value) {
+        this._modelKeyword = value;
     }
     _mergeValidators() {
-        this._config.validators = {
-            ...(this._config.customValidators),
-            ...(this._config.validatorsLibrary)
+        this.validators = {
+            ...(this.customValidators),
+            ...(this.validatorsLibrary)
         };
     }
-    _addValidators(...validators) {
-        this._config.validators = {
-            ...(this._config.validators),
-            ...(validators)
-        };
+    addValidators(...validators) {
+        // TODO
+    }
+    addValidations(...validations) {
+        // TODO
     }
 }

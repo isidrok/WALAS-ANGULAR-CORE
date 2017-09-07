@@ -1,5 +1,5 @@
-const NAMESPACE = require('../../../../namespace.config.json').namespace;
+import {namespace} from '../../../../../namespace.config.json';
 
 export const loaderDefaults = {
-    namespace: NAMESPACE
+    namespace,
 };

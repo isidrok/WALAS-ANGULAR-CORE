@@ -3,7 +3,7 @@ import {ModelService} from './modelservice';
 
 /**
  * Directive to automatically build the model specified as input.
- * @Example: afModel="person.profile.name" will create the neccesarry
+ * @Example: model="person.profile.name" will create the neccesarry
  *           properties inside person in order to get this final structure:
  *              ParentComponent: {
  *                  person: {

@@ -1,8 +1,15 @@
-import config from './rollup.config.js';
+import serve from 'rollup-plugin-serve';
+import livereload from 'rollup-plugin-livereload';
+import config from './rollup.config.nomin.js';
 
-/**
- * Remove Uglify in case we want to 
- * debug the module in the explorer
- */
-config.plugins.pop();
+config.plugins.unshift(
+    serve({
+        open: true,
+        contentBase: '',
+        port: 8080
+    }),
+    livereload({
+        watch: 'dist'
+    })
+);
 export default config;

@@ -1,19 +1,31 @@
 import {
-    I18nConfig, LoaderConfig, ValidationConfig,
-    defaultConfig
+    I18nConfig, LoaderConfig, ValidationConfig
 } from './configs';
-class ConfigService {
+import {configMixin} from './configmixin';
+class ConfigService extends configMixin(
+    I18nConfig,
+    LoaderConfig,
+    ValidationConfig) {
     constructor() {
-        this._config = defaultConfig;
-    }
-    get config() {
-        return this._config;
+        /**
+         * Initialize default configs of the
+         * different configuration services
+         * that are specified in the mixin
+         */
+        super();
     }
     init(customConfig) {
-        this.mergeConfigs(customConfig);
+        /**
+         * Merge the previously initialized default
+         * properties with the ones specified by the
+         * user, then call init method of all the 
+         * mixed classes.
+         */
+        this._mergeConfig(customConfig);
+        super.init();
     }
-    mergeConfigs(customConfig) {
-        this._config = {...(this._config), ...customConfig};
+    _mergeConfig(config) {
+        Object.assign(this, config);
     }
 }
 export const configService = new ConfigService();

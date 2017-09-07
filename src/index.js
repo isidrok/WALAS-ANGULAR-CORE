@@ -1,4 +1,7 @@
+// import first to satisfy dependencies
+import '@walas/angular-vendor-browser';
 export * from './module';
 export * from './packages';
 export * from './utils';
-import '@walas/angular-vendor-browser';
+// reexport the vendor to not depend on it in future modules
+export * from '@walas/angular-vendor';
