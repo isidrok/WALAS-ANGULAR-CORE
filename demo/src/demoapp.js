@@ -16,3 +16,7 @@ export class DemoApp {
         console.log(this);
     }
 }
+
+// TODO: when changing the password email wont be validated again
+// although the validation depends on both inputs, but since the control
+// is only in email, password changes won't trigger it.

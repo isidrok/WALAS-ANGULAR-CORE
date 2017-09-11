@@ -73443,7 +73443,30 @@ var _extends = Object.assign || function (target) {
   return target;
 };
 
+var get = function get(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
 
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+
+    if (getter === undefined) {
+      return undefined;
+    }
+
+    return getter.call(receiver);
+  }
+};
 
 var inherits = function (subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
@@ -73892,10 +73915,11 @@ var mixinWithComposition = function mixinWithComposition() {
      * in target with the same name that will call all methods within
      * protos that share said name.
      * 
-     * TODO: limit it so only methods can be composed (no set/get)
-     *       refactor using Reflect API
-     * TODO: doesn't work the scope is messed up
-     * 
+     * TODO: -> limit it so only methods can be composed (no set/get)
+     *       -> refactor using Reflect API
+     *       -> find a way to preserve main class context so when calling
+     *          super.someMethod() we dont need to pass its scope 
+     *  
      * @param {any} target 
      * @param {any} protos 
      * @param {any} props 
@@ -73907,8 +73931,10 @@ var mixinWithComposition = function mixinWithComposition() {
         }
         props.map(function (prop) {
             target.prototype[prop] = function () {
+                var _this2 = this;
+
                 protos.map(function (proto) {
-                    return proto[prop] && proto[prop]();
+                    return proto[prop] && proto[prop].call(_this2);
                 });
             };
         });
@@ -73970,8 +73996,8 @@ var ConfigService = function (_configMixin) {
              * mixed classes.
              */
             this._mergeConfig(customConfig);
-            this._mergeValidators();
-            // super.init();
+            // need to call with actual scope due to the mixin implementation.
+            get(ConfigService.prototype.__proto__ || Object.getPrototypeOf(ConfigService.prototype), 'init', this).call(this);
         }
     }, {
         key: '_mergeConfig',

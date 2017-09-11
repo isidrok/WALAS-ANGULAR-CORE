@@ -43,10 +43,11 @@ export const mixinWithComposition = function(...propsToMix) {
      * in target with the same name that will call all methods within
      * protos that share said name.
      * 
-     * TODO: limit it so only methods can be composed (no set/get)
-     *       refactor using Reflect API
-     * TODO: doesn't work the scope is messed up
-     * 
+     * TODO: -> limit it so only methods can be composed (no set/get)
+     *       -> refactor using Reflect API
+     *       -> find a way to preserve main class context so when calling
+     *          super.someMethod() we dont need to pass its scope 
+     *  
      * @param {any} target 
      * @param {any} protos 
      * @param {any} props 
@@ -58,7 +59,7 @@ export const mixinWithComposition = function(...propsToMix) {
         }
         props.map((prop) => {
             target.prototype[prop] = function() {
-                protos.map((proto) => proto[prop] && proto[prop]());
+                protos.map((proto) => proto[prop] && proto[prop].call(this));
             };
         });
     }

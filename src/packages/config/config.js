@@ -22,8 +22,8 @@ class ConfigService extends configMixin(
          * mixed classes.
          */
         this._mergeConfig(customConfig);
-        this._mergeValidators();
-        // super.init();
+        // need to call with actual scope due to the mixin implementation.
+        super.init.call(this);
     }
     _mergeConfig(config) {
         /**
