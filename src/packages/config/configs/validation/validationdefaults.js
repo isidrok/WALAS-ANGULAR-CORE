@@ -1,6 +1,7 @@
 export const validationDefaults = {
     modelKeyword: '$model',
-    validatorLibray: {},
+    defaultValidationError: 'Validation Error!',
+    validatorLibrary: {},
     customValidators: {},
     validators: {},
     validations: {},

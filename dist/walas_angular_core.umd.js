@@ -73443,30 +73443,7 @@ var _extends = Object.assign || function (target) {
   return target;
 };
 
-var get = function get(object, property, receiver) {
-  if (object === null) object = Function.prototype;
-  var desc = Object.getOwnPropertyDescriptor(object, property);
 
-  if (desc === undefined) {
-    var parent = Object.getPrototypeOf(object);
-
-    if (parent === null) {
-      return undefined;
-    } else {
-      return get(parent, property, receiver);
-    }
-  } else if ("value" in desc) {
-    return desc.value;
-  } else {
-    var getter = desc.get;
-
-    if (getter === undefined) {
-      return undefined;
-    }
-
-    return getter.call(receiver);
-  }
-};
 
 var inherits = function (subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
@@ -73589,10 +73566,8 @@ var FormService = (_dec$2 = Injectable(), _dec$2(_class$2 = function () {
 
     createClass$1(FormService, [{
         key: 'addControl',
-        value: function addControl(control, controlName) {
-            control && controlName && this._controls.push(_extends({}, control, {
-                controlName: controlName
-            }));
+        value: function addControl(control, name) {
+            control && name && this._controls.push(Object.assign(control, { name: name }));
         }
     }, {
         key: 'dispose',
@@ -73619,13 +73594,15 @@ var FormService = (_dec$2 = Injectable(), _dec$2(_class$2 = function () {
     return FormService;
 }()) || _class$2);
 
-var html = "<form #frm=\"ngForm\">\n    <ng-content></ng-content>\n</form>";
+var html = "<form #frm=\"ngForm\" (ngSubmit)=\"onSubmit()\">\n    <ng-content></ng-content>\n</form>";
 
 var _dec$1;
 var _dec2;
+var _dec3;
 var _class$1;
 var _class2;
 var _descriptor;
+var _descriptor2;
 
 function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -73679,11 +73656,13 @@ var AfForm = (_dec$1 = Component({
     selector: 'af-form',
     template: html,
     providers: [FormService]
-}), _dec2 = ViewChild('frm'), _dec$1(_class$1 = (_class2 = function () {
+}), _dec2 = ViewChild('frm'), _dec3 = Input(), _dec$1(_class$1 = (_class2 = function () {
     function AfForm(formService) {
         classCallCheck(this, AfForm);
 
         _initDefineProp(this, 'form', _descriptor, this);
+
+        _initDefineProp(this, 'onSubmit', _descriptor2, this);
 
         this._formService = formService;
     }
@@ -73712,19 +73691,45 @@ var AfForm = (_dec$1 = Component({
     initializer: function initializer() {
         return this.form;
     }
+}), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'onSubmit', [_dec3], {
+    enumerable: true,
+    initializer: function initializer() {
+        return this.onSubmit;
+    }
 })), _class2)) || _class$1);
 Reflect.defineMetadata('design:paramtypes', [FormService], AfForm);
 
 var i18nDefaults = {
     useI18n: true,
-    i18nLibrary: 'i18next'
+    i18nLibrary: {}
 };
 
-var I18nConfig = function I18nConfig() {
-    classCallCheck(this, I18nConfig);
+var I18nConfig = function () {
+    function I18nConfig() {
+        classCallCheck(this, I18nConfig);
 
-    Object.assign(this, i18nDefaults);
-};
+        Object.assign(this, i18nDefaults);
+    }
+
+    createClass$1(I18nConfig, [{
+        key: 'useI18n',
+        get: function get$$1() {
+            return this._useI18n;
+        },
+        set: function set$$1(value) {
+            this._useI18n = value;
+        }
+    }, {
+        key: 'i18nLibrary',
+        get: function get$$1() {
+            return this._i18nLibrary;
+        },
+        set: function set$$1(value) {
+            this._i18nLibrary = value;
+        }
+    }]);
+    return I18nConfig;
+}();
 
 var namespace = "WALAS";
 
@@ -73753,7 +73758,8 @@ var LoaderConfig = function () {
 
 var validationDefaults = {
     modelKeyword: '$model',
-    validatorLibray: {},
+    defaultValidationError: 'Validation Error!',
+    validatorLibrary: {},
     customValidators: {},
     validators: {},
     validations: {}
@@ -73774,7 +73780,7 @@ var ValidationConfig = function () {
     }, {
         key: '_mergeValidators',
         value: function _mergeValidators() {
-            this.validators = _extends({}, this.customValidators, this.validatorsLibrary);
+            this.validators = _extends({}, this.customValidators, this.validatorLibrary);
         }
     }, {
         key: 'addValidators',
@@ -73809,6 +73815,30 @@ var ValidationConfig = function () {
         },
         set: function set$$1(value) {
             this._modelKeyword = value;
+        }
+    }, {
+        key: 'defaultValidationError',
+        get: function get$$1() {
+            return this._defaultValidationError;
+        },
+        set: function set$$1(value) {
+            this._defaultValidationError = value;
+        }
+    }, {
+        key: 'validatorLibrary',
+        get: function get$$1() {
+            return this._validatorLibrary;
+        },
+        set: function set$$1(value) {
+            this._validatorLibrary = value;
+        }
+    }, {
+        key: 'customValidators',
+        get: function get$$1() {
+            return this._customValidators;
+        },
+        set: function set$$1(value) {
+            this._customValidators = value;
         }
     }]);
     return ValidationConfig;
@@ -73864,6 +73894,7 @@ var mixinWithComposition = function mixinWithComposition() {
      * 
      * TODO: limit it so only methods can be composed (no set/get)
      *       refactor using Reflect API
+     * TODO: doesn't work the scope is messed up
      * 
      * @param {any} target 
      * @param {any} protos 
@@ -73939,12 +73970,41 @@ var ConfigService = function (_configMixin) {
              * mixed classes.
              */
             this._mergeConfig(customConfig);
-            get(ConfigService.prototype.__proto__ || Object.getPrototypeOf(ConfigService.prototype), 'init', this).call(this);
+            this._mergeValidators();
+            // super.init();
         }
     }, {
         key: '_mergeConfig',
         value: function _mergeConfig(config) {
-            Object.assign(this, config);
+            /**
+             * Config will have a format like: 
+             *  
+             *  {
+             *      i18n: {
+             *          useI18n: true
+             *      },
+             *      validation: {
+             *          validationLibrary: validatorjs
+             *      }
+             *  }
+             *
+             * in order to access the configuration properties
+             * directly we need to normalize the object first
+             * so that we end up with:
+             * 
+             *  {
+             *      useI18n: true,
+             *      validationLibrary: validatorjs
+             *  } 
+             * 
+             * The first format is more confortable for the user while
+             * the second one is easier to work with.
+             */
+            var normalizedConfig = {};
+            Object.values(config).map(function (item) {
+                return Object.assign(normalizedConfig, item);
+            });
+            Object.assign(this, normalizedConfig);
         }
     }]);
     return ConfigService;
@@ -73983,7 +74043,7 @@ var AfModuleLoader = (_dec$3 = Injectable(), _dec$3(_class$3 = function () {
                 modulePath = _splitPath2.modulePath,
                 moduleName = _splitPath2.moduleName;
 
-            var namespace = configService.getNamespace();
+            var namespace = configService.namespace;
             return new Promise(function (resolve, reject) {
                 var loadedModule = _this._getModule(namespace, moduleName);
                 if (loadedModule) {
@@ -74217,6 +74277,7 @@ var Model = (_dec$4 = Directive({
             if (path.length === 1) {
                 this._throwModelError('Cannot write directly into the model, a property must be specified.');
             }
+            return path;
         }
     }, {
         key: '_setComponentAttrs',
@@ -74303,11 +74364,11 @@ Reflect.defineMetadata('design:paramtypes', [ViewContainerRef, ModelService], Mo
 
 var _dec$6;
 var _dec2$2;
-var _dec3;
+var _dec3$1;
 var _class$6;
 var _class2$2;
 var _descriptor$2;
-var _descriptor2;
+var _descriptor2$1;
 
 function _initDefineProp$2(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -74374,13 +74435,13 @@ var VALIDATORS_PROVIDER = {
 var Rule = (_dec$6 = Directive({
     selector: '[rule][ngModel]',
     providers: [VALIDATORS_PROVIDER]
-}), _dec2$2 = Input('rule'), _dec3 = Input(), _dec$6(_class$6 = (_class2$2 = function () {
+}), _dec2$2 = Input('rule'), _dec3$1 = Input(), _dec$6(_class$6 = (_class2$2 = function () {
     function Rule(modelService) {
         classCallCheck(this, Rule);
 
         _initDefineProp$2(this, 'path', _descriptor$2, this);
 
-        _initDefineProp$2(this, 'setValidity', _descriptor2, this);
+        _initDefineProp$2(this, 'setValidity', _descriptor2$1, this);
 
         this._modelService = modelService;
     }
@@ -74430,7 +74491,7 @@ var Rule = (_dec$6 = Directive({
             var keys = this.path.split('.');
             var entity = keys[0];
             var field = keys[1];
-            return configService.getValidations()[entity][field];
+            return configService.validations[entity][field];
         }
     }, {
         key: '_getValidationParams',
@@ -74438,14 +74499,14 @@ var Rule = (_dec$6 = Directive({
             var validationName = this._getValidatonName(validationObj);
             var validation = validationObj[validationName];
             var allArgs = validation.arguments || [];
-            var validators = configService.getValidators();
-            var MODEL_KEYWORD = configService.getModelKeyword();
+            var validators = configService.validators;
+            var MODEL_KEYWORD = configService.modelKeyword;
             return {
                 func: validators[validationName],
                 args: allArgs.filter(function (c) {
                     return c !== MODEL_KEYWORD;
                 }),
-                msg: validation.message || configService.getDefaultValidationError(),
+                msg: validation.message || configService.defaultValidationError,
                 fromModel: allArgs.includes(MODEL_KEYWORD)
             };
         }
@@ -74461,7 +74522,7 @@ var Rule = (_dec$6 = Directive({
     initializer: function initializer() {
         return null;
     }
-}), _descriptor2 = _applyDecoratedDescriptor$2(_class2$2.prototype, 'setValidity', [_dec3], {
+}), _descriptor2$1 = _applyDecoratedDescriptor$2(_class2$2.prototype, 'setValidity', [_dec3$1], {
     enumerable: true,
     initializer: function initializer() {
         return null;
@@ -74474,15 +74535,15 @@ var _class;
 
 var ALL = [Rule, Model, AfForm];
 
-var WalasAngularCore = (_dec = NgModule({
-    imports: [FormsModule, CommonModule],
+var WalasAngularCoreModule = (_dec = NgModule({
+    imports: [FormsModule, BrowserModule],
     exports: ALL,
     declarations: ALL
-}), _dec(_class = function WalasAngularCore() {
-    classCallCheck(this, WalasAngularCore);
+}), _dec(_class = function WalasAngularCoreModule() {
+    classCallCheck(this, WalasAngularCoreModule);
 }) || _class);
 
-exports.WalasAngularCore = WalasAngularCore;
+exports.WalasAngularCoreModule = WalasAngularCoreModule;
 exports.ExtendComponent = ExtendComponent;
 exports.AfForm = AfForm;
 exports.FormService = FormService;

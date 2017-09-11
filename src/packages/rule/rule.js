@@ -70,18 +70,18 @@ export class Rule {
         let keys = this.path.split('.');
         let entity = keys[0];
         let field = keys[1];
-        return configService.getValidations()[entity][field];
+        return configService.validations[entity][field];
     }
     _getValidationParams(validationObj) {
         let validationName = this._getValidatonName(validationObj);
         let validation = validationObj[validationName];
         let allArgs = validation.arguments || [];
-        let validators = configService.getValidators();
-        let MODEL_KEYWORD = configService.getModelKeyword();
+        let validators = configService.validators;
+        let MODEL_KEYWORD = configService.modelKeyword;
         return {
             func: validators[validationName],
             args: allArgs.filter((c) => c !== MODEL_KEYWORD),
-            msg: validation.message || configService.getDefaultValidationError(),
+            msg: validation.message || configService.defaultValidationError,
             fromModel: allArgs.includes(MODEL_KEYWORD)
         };
     }

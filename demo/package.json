@@ -1,0 +1,38 @@
+{
+  "name": "walas-angular-core-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/walas_angular_core_demo.umd.js",
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "build:dev": "rollup -c rollup.config.dev.js --watch",
+    "update:core": "npm i @walas/angular-core",
+    "uc": "npm run update:core",
+    "postuc": "npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-angular2": "0.0.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "eslint": "^4.2.0",
+    "eslint-config-google": "^0.9.1",
+    "npm-run-all": "^4.1.1",
+    "rollup": "^0.41.6",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^8.2.1",
+    "rollup-plugin-livereload": "^0.6.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-serve": "^0.4.2",
+    "rollup-plugin-string": "^2.0.2",
+    "rollup-watch": "^4.3.1"
+  },
+  "dependencies": {
+    "@walas/angular-core": "file:../",
+    "validator": "^8.2.0"
+  }
+}

@@ -1,4 +1,4 @@
-import {NgModule, FormsModule, CommonModule} from '@walas/angular-vendor';
+import {NgModule, FormsModule, BrowserModule} from '@walas/angular-vendor';
 import {AfForm, Model, Rule} from './packages';
 
 const ALL = [
@@ -10,9 +10,9 @@ const ALL = [
 @NgModule({
     imports: [
         FormsModule,
-        CommonModule
+        BrowserModule
     ],
     exports: ALL,
     declarations: ALL,
 })
-export class WalasAngularCore {}
+export class WalasAngularCoreModule {}

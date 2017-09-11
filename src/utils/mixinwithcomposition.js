@@ -45,6 +45,7 @@ export const mixinWithComposition = function(...propsToMix) {
      * 
      * TODO: limit it so only methods can be composed (no set/get)
      *       refactor using Reflect API
+     * TODO: doesn't work the scope is messed up
      * 
      * @param {any} target 
      * @param {any} protos 

@@ -59,6 +59,7 @@ export class Model {
                 'Cannot write directly into the model, a property must be specified.'
             );
         }
+        return path;
     }
     _setComponentAttrs() {
         let component = this._getComponent();

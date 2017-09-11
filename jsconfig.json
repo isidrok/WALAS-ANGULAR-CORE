@@ -1,5 +1,11 @@
 {
     "compilerOptions": {
         "experimentalDecorators": true
-    }
+    },
+    "exclude": [
+        "demo/node_modules",
+        "demo/dist",
+        "node_modules",
+        "dist"        
+    ]
 }

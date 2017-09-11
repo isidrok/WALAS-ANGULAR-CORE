@@ -24,11 +24,10 @@ export class FormService {
         */
         this._form && this._controls.forEach((c) => this._form.addControl(c));
     }
-    addControl(control, controlName) {
-        control && controlName && this._controls.push({
-            ...control,
-            controlName
-        });
+    addControl(control, name) {
+        control && name && this._controls.push(
+            Object.assign(control, {name})
+        );
     }
     dispose() {
         this._controls = [];

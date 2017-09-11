@@ -19,7 +19,7 @@ export class AfModuleLoader {
     }
     load(path) {
         const {modulePath, moduleName} = this._splitPath(path);
-        const namespace = configService.getNamespace();
+        const namespace = configService.namespace;
         return new Promise((resolve, reject) => {
             let loadedModule = this._getModule(namespace, moduleName);
             if (loadedModule) {

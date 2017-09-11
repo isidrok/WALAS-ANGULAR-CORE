@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@walas/angular-vendor';
+import {Component, ViewChild, Input} from '@walas/angular-vendor';
 import {FormService} from '../formservice';
 import html from './afform.html';
 
@@ -17,6 +17,7 @@ import html from './afform.html';
 })
 export class AfForm {
     @ViewChild('frm') form;
+    @Input() onSubmit;
     constructor(formService: FormService) {
         this._formService = formService;
     }
