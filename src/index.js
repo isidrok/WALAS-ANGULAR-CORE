@@ -1,5 +1,3 @@
-// import first to satisfy dependencies
-import '@walas/angular-vendor-browser';
 export * from './module';
 export * from './packages';
 export * from './utils';

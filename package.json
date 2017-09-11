@@ -2,7 +2,8 @@
   "name": "@walas/angular-core",
   "version": "0.0.0",
   "description": "Core elements for integration with Angular 4",
-  "main": "dist/walas_angular_core.js",
+  "main": "dist/walas_angular_core.umd.js",
+  "module": "dist/walas_angular_core.js",
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "build:dev": "rollup -c rollup.config.dev.js --watch",
@@ -32,7 +33,6 @@
     "npm-run-all": "^4.1.1",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
-    "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-livereload": "^0.6.0",
     "rollup-plugin-node-resolve": "^3.0.0",
@@ -41,8 +41,10 @@
     "rollup-plugin-uglify": "^1.0.2",
     "rollup-watch": "^4.3.1"
   },
-  "peerDependencies": {
-    "@walas/angular-vendor": "git+https://github.com/Alfatecsistemas/WALAS-ANGULAR-VENDOR.git",
-    "@walas/angular-vendor-browser": "git+https://github.com/Alfatecsistemas/WALAS-ANGULAR-VENDOR-BROWSER.git"
-  }
+  "dependencies": {
+    "@walas/angular-vendor": "git+https://github.com/Alfatecsistemas/WALAS-ANGULAR-VENDOR.git"
+  },
+  "files":[
+    "dist"
+  ]
 }
