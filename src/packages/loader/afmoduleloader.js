@@ -5,10 +5,9 @@ const SEPARATOR = '#';
 /**
  * Custom loader to lazy load modules via scripts. Routes
  * must be specified using the following pattern:
- *  PathToModule#ModuleName
- * 
- * TODO: pass a route object instead of path to load dependencies
- * 
+ *  
+ * TODO: improve docs
+ *  
  * @export
  * @class AfModuleLoader
  */
@@ -18,17 +17,24 @@ export class AfModuleLoader {
         this._compiler = compiler;
     }
     load(path) {
-        const {modulePath, moduleName} = this._splitPath(path);
+        const {modulePath, moduleName, dependencies} = JSON.parse(path);
         const namespace = configService.namespace;
+        let missingDependencies = dependencies && dependencies
+            .filter((dependency) =>
+                this._isModuleMissing(dependency.moduleName, namespace)
+            );
+        if (missingDependencies && missingDependencies.length > 0) {
+            // TODO: handle missing dependencies Promise.all???
+        }
         return new Promise((resolve, reject) => {
-            let loadedModule = this._getModule(namespace, moduleName);
+            let loadedModule = this._getModule(moduleName, namespace);
             if (loadedModule) {
                 resolve(loadedModule);
             }
             let script = document.createElement('script');
             script.src = modulePath;
             script.onload = () => {
-                loadedModule = this._getModule(namespace, moduleName);
+                loadedModule = this._getModule(moduleName, namespace);
                 if (!loadedModule) {
                     reject(`${moduleName} could not be found although ${modulePath} was correctly loaded`);
                 }
@@ -46,12 +52,11 @@ export class AfModuleLoader {
             document.head.appendChild(script);
         });
     }
-    _splitPath(path) {
-        let [modulePath, moduleName] = path.split(SEPARATOR);
-        return {modulePath, moduleName};
-    }
-    _getModule(namespace, moduleName) {
+    _getModule(moduleName, namespace) {
         return window && window[namespace] && window[namespace][moduleName];
+    }
+    _isModuleMissing(moduleName, namespace) {
+        return !this._getModule(moduleName, namespace);
     }
 }
 

@@ -6,4 +6,11 @@ export class LoaderConfig {
 
     get namespace() {return this._namespace;}
     set namespace(value) {this._namespace = value;}
+
+    get routes() {return this._routes;}
+    set routes(value) {this._routes = value;}
+
+    addRoutes(...routes){
+        // TODO
+    }
 }

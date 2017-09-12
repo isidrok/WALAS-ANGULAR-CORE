@@ -1,7 +1,5 @@
-import {platformBrowserDynamic, enableProdMode, configService} from '@walas/angular-core';
-import {myConfig} from './config';
-import {DemoModule} from './module';
+import {platformBrowserDynamic, enableProdMode} from '@walas/angular-core';
+import {DemoModule} from './app';
 
-configService.init(myConfig);
 enableProdMode();
 platformBrowserDynamic().bootstrapModule(DemoModule);

@@ -73502,70 +73502,6 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
-
-
-
-
-var slicedToArray = function () {
-  function sliceIterator(arr, i) {
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _e = undefined;
-
-    try {
-      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-        _arr.push(_s.value);
-
-        if (i && _arr.length === i) break;
-      }
-    } catch (err) {
-      _d = true;
-      _e = err;
-    } finally {
-      try {
-        if (!_n && _i["return"]) _i["return"]();
-      } finally {
-        if (_d) throw _e;
-      }
-    }
-
-    return _arr;
-  }
-
-  return function (arr, i) {
-    if (Array.isArray(arr)) {
-      return arr;
-    } else if (Symbol.iterator in Object(arr)) {
-      return sliceIterator(arr, i);
-    } else {
-      throw new TypeError("Invalid attempt to destructure non-iterable instance");
-    }
-  };
-}();
-
-
-
-
-
-
-
-
-
-
-
-
-
-var toConsumableArray = function (arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-    return arr2;
-  } else {
-    return Array.from(arr);
-  }
-};
-
 var _dec$2;
 var _class$2;
 
@@ -73757,7 +73693,8 @@ var I18nConfig = function () {
 var namespace = "WALAS";
 
 var loaderDefaults = {
-    namespace: namespace
+    namespace: namespace,
+    routes: []
 };
 
 var LoaderConfig = function () {
@@ -73768,12 +73705,25 @@ var LoaderConfig = function () {
     }
 
     createClass$1(LoaderConfig, [{
+        key: 'addRoutes',
+        value: function addRoutes() {
+            // TODO
+        }
+    }, {
         key: 'namespace',
         get: function get$$1() {
             return this._namespace;
         },
         set: function set$$1(value) {
             this._namespace = value;
+        }
+    }, {
+        key: 'routes',
+        get: function get$$1() {
+            return this._routes;
+        },
+        set: function set$$1(value) {
+            this._routes = value;
         }
     }]);
     return LoaderConfig;
@@ -74041,7 +73991,6 @@ var configService = new ConfigService();
 var _dec$3;
 var _class$3;
 
-var SEPARATOR = '#';
 /**
  * Custom loader to lazy load modules via scripts. Routes
  * must be specified using the following pattern:
@@ -74065,20 +74014,27 @@ var AfModuleLoader = (_dec$3 = Injectable(), _dec$3(_class$3 = function () {
         value: function load(path) {
             var _this = this;
 
-            var _splitPath2 = this._splitPath(path),
-                modulePath = _splitPath2.modulePath,
-                moduleName = _splitPath2.moduleName;
+            var _JSON$parse = JSON.parse(path),
+                modulePath = _JSON$parse.modulePath,
+                moduleName = _JSON$parse.moduleName,
+                dependencies = _JSON$parse.dependencies;
 
             var namespace = configService.namespace;
+            var missingDependencies = dependencies && dependencies.filter(function (dependency) {
+                return _this._isModuleMissing(dependency.moduleName, namespace);
+            });
+            if (missingDependencies && missingDependencies.length > 0) {
+                // TODO: handle missing dependencies
+            }
             return new Promise(function (resolve, reject) {
-                var loadedModule = _this._getModule(namespace, moduleName);
+                var loadedModule = _this._getModule(moduleName, namespace);
                 if (loadedModule) {
                     resolve(loadedModule);
                 }
                 var script = document.createElement('script');
                 script.src = modulePath;
                 script.onload = function () {
-                    loadedModule = _this._getModule(namespace, moduleName);
+                    loadedModule = _this._getModule(moduleName, namespace);
                     if (!loadedModule) {
                         reject(moduleName + ' could not be found although ' + modulePath + ' was correctly loaded');
                     }
@@ -74096,19 +74052,14 @@ var AfModuleLoader = (_dec$3 = Injectable(), _dec$3(_class$3 = function () {
             });
         }
     }, {
-        key: '_splitPath',
-        value: function _splitPath(path) {
-            var _path$split = path.split(SEPARATOR),
-                _path$split2 = slicedToArray(_path$split, 2),
-                modulePath = _path$split2[0],
-                moduleName = _path$split2[1];
-
-            return { modulePath: modulePath, moduleName: moduleName };
+        key: '_getModule',
+        value: function _getModule(moduleName, namespace) {
+            return window && window[namespace] && window[namespace][moduleName];
         }
     }, {
-        key: '_getModule',
-        value: function _getModule(namespace, moduleName) {
-            return window && window[namespace] && window[namespace][moduleName];
+        key: '_isModuleMissing',
+        value: function _isModuleMissing(moduleName, namespace) {
+            return !this._getModule(moduleName, namespace);
         }
     }]);
     return AfModuleLoader;
@@ -74125,46 +74076,16 @@ var AfModuleLoaderProvider = {
   useClass: AfModuleLoader
 };
 
-var getPathToModule = function getPathToModule(moduleName) {
-    // TODO: solve this.
-    return "app/src/modules/" + moduleName + "/dist/" + moduleName + ".js";
-};
-var getChildrenPath = function getChildrenPath(moduleName) {
-    return getPathToModule(moduleName) + "#" + moduleName;
-};
-var resolveRoutes = function resolveRoutes() {
-    return Object.keys(window.routes).map(function (routeKey) {
-        var route = window.routes[routeKey];
+var resolveRoutes = function resolveRoutes(routes) {
+    return routes.map(function (routeObject) {
         return {
-            path: route.path,
-            loadChildren: getChildrenPath(routeKey)
+            path: routeObject.route,
+            loadChildren: JSON.stringify(routeObject)
         };
     });
 };
-var composeRoutes = function composeRoutes() {
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-    }
 
-    return [].concat(toConsumableArray(resolveRoutes()), args);
-};
-
-/**
- * We need to return an object with the form:
- *  {
- *      path,
- *      loadChildren
- *  }
- * path must be the url to the lazy loaded module
- * and loadChildren needs to be an object in the lines of:
- *  {
- *      path: where do we get the module from ??
- *      moduleName,
- *      dependencies: [dependencies that need to be lazy loaded] ??
- *  }
- * 
- * NEEDS SPPECIFICATION
- */
+var walasLoader = { resolveRoutes: resolveRoutes };
 
 var _dec$5;
 var _class$5;
@@ -74562,12 +74483,14 @@ var _class;
 var ALL = [Rule, Model, AfForm];
 
 var WalasAngularCoreModule = (_dec = NgModule({
-    imports: [FormsModule, BrowserModule],
+    imports: [FormsModule, CommonModule],
     exports: ALL,
     declarations: ALL
 }), _dec(_class = function WalasAngularCoreModule() {
     classCallCheck(this, WalasAngularCoreModule);
 }) || _class);
+
+// TODO: import commonModule instead of BrowserModule to not break lazy load
 
 exports.WalasAngularCoreModule = WalasAngularCoreModule;
 exports.ExtendComponent = ExtendComponent;
@@ -74575,10 +74498,8 @@ exports.AfForm = AfForm;
 exports.FormService = FormService;
 exports.AfModuleLoader = AfModuleLoader;
 exports.AfModuleLoaderProvider = AfModuleLoaderProvider;
-exports.getPathToModule = getPathToModule;
-exports.getChildrenPath = getChildrenPath;
 exports.resolveRoutes = resolveRoutes;
-exports.composeRoutes = composeRoutes;
+exports.walasLoader = walasLoader;
 exports.Model = Model;
 exports.ModelService = ModelService;
 exports.Rule = Rule;
