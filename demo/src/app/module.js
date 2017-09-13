@@ -1,6 +1,6 @@
 import {
     NgModule, WalasAngularCoreModule, FormsModule,
-    RouterModule, AfModuleLoaderProvider, walasLoader,
+    RouterModule, AfModuleLoaderProvider, resolveRoutes,
     configService, BrowserModule
 } from '@walas/angular-core';
 import {DemoApp} from './demoapp';
@@ -16,7 +16,7 @@ const defaultRoutes = [
         BrowserModule,
         WalasAngularCoreModule,
         RouterModule.forRoot([
-            ...walasLoader.resolveRoutes(configService.routes),
+            ...resolveRoutes(configService.routes),
             ...defaultRoutes
         ], {useHash: true})
     ],

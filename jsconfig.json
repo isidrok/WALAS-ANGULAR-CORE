@@ -5,6 +5,8 @@
     "exclude": [
         "demo/node_modules",
         "demo/dist",
+        "demo/src/modules/bill/dist",
+        "demo/src/modules/bill/node_modules",        
         "node_modules",
         "dist"        
     ]

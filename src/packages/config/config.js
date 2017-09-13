@@ -13,6 +13,16 @@ class ConfigService extends configMixin(
          * that are specified in the mixin
          */
         super();
+        this._isInitialized = false;
+    }
+    get isInitialized() {return this._isInitialized;}
+
+    checkIsInitialized(errorMsg) {
+        const defaultErrorMsg =
+            'The configuration service must be initialized before declaring the main module.'
+        if (!this._isInitialized) {
+            throw new Error(errorMsg || defaultErrorMsg);
+        }
     }
     init(customConfig) {
         /**
@@ -24,6 +34,7 @@ class ConfigService extends configMixin(
         this._mergeConfig(customConfig);
         // need to call with actual scope due to the mixin implementation.
         super.init.call(this);
+        this._isInitialized = true;
     }
     _mergeConfig(config) {
         /**

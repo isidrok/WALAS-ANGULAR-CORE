@@ -7,5 +7,3 @@ export const resolveRoutes = function(routes) {
             loadChildren: JSON.stringify(routeObject)
         }));
 };
-
-export const walasLoader = {resolveRoutes};

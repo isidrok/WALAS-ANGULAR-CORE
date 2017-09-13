@@ -73531,6 +73531,9 @@ var FormService = (_dec$2 = Injectable(), _dec$2(_class$2 = function () {
     }, {
         key: 'dispose',
         value: function dispose() {
+            // TODO: check if when angular destroys the form component
+            // the instance of the formService is destroyed aswell so
+            // we may not need this method.
             this._controls = [];
             this._form = null;
         }
@@ -73928,15 +73931,27 @@ var ConfigService = function (_configMixin) {
     function ConfigService() {
         classCallCheck(this, ConfigService);
 
+        var _this = possibleConstructorReturn(this, (ConfigService.__proto__ || Object.getPrototypeOf(ConfigService)).call(this));
         /**
          * Initialize default configs of the
          * different configuration services
          * that are specified in the mixin
          */
-        return possibleConstructorReturn(this, (ConfigService.__proto__ || Object.getPrototypeOf(ConfigService)).call(this));
+
+
+        _this._isInitialized = false;
+        return _this;
     }
 
     createClass$1(ConfigService, [{
+        key: 'checkIsInitialized',
+        value: function checkIsInitialized(errorMsg) {
+            var defaultErrorMsg = 'The configuration service must be initialized before declaring the main module.';
+            if (!this._isInitialized) {
+                throw new Error(errorMsg || defaultErrorMsg);
+            }
+        }
+    }, {
         key: 'init',
         value: function init(customConfig) {
             /**
@@ -73948,6 +73963,7 @@ var ConfigService = function (_configMixin) {
             this._mergeConfig(customConfig);
             // need to call with actual scope due to the mixin implementation.
             get(ConfigService.prototype.__proto__ || Object.getPrototypeOf(ConfigService.prototype), 'init', this).call(this);
+            this._isInitialized = true;
         }
     }, {
         key: '_mergeConfig',
@@ -73982,6 +73998,11 @@ var ConfigService = function (_configMixin) {
             });
             Object.assign(this, normalizedConfig);
         }
+    }, {
+        key: 'isInitialized',
+        get: function get$$1() {
+            return this._isInitialized;
+        }
     }]);
     return ConfigService;
 }(configMixin(I18nConfig, LoaderConfig, ValidationConfig));
@@ -73994,10 +74015,9 @@ var _class$3;
 /**
  * Custom loader to lazy load modules via scripts. Routes
  * must be specified using the following pattern:
- *  PathToModule#ModuleName
- * 
- * TODO: pass a route object instead of path to load dependencies
- * 
+ *  
+ * TODO: improve docs
+ *  
  * @export
  * @class AfModuleLoader
  */
@@ -74024,7 +74044,7 @@ var AfModuleLoader = (_dec$3 = Injectable(), _dec$3(_class$3 = function () {
                 return _this._isModuleMissing(dependency.moduleName, namespace);
             });
             if (missingDependencies && missingDependencies.length > 0) {
-                // TODO: handle missing dependencies
+                // TODO: handle missing dependencies Promise.all???
             }
             return new Promise(function (resolve, reject) {
                 var loadedModule = _this._getModule(moduleName, namespace);
@@ -74084,8 +74104,6 @@ var resolveRoutes = function resolveRoutes(routes) {
         };
     });
 };
-
-var walasLoader = { resolveRoutes: resolveRoutes };
 
 var _dec$5;
 var _class$5;
@@ -74499,7 +74517,6 @@ exports.FormService = FormService;
 exports.AfModuleLoader = AfModuleLoader;
 exports.AfModuleLoaderProvider = AfModuleLoaderProvider;
 exports.resolveRoutes = resolveRoutes;
-exports.walasLoader = walasLoader;
 exports.Model = Model;
 exports.ModelService = ModelService;
 exports.Rule = Rule;

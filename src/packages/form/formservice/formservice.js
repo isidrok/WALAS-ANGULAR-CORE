@@ -30,6 +30,9 @@ export class FormService {
         );
     }
     dispose() {
+        // TODO: check if when angular destroys the form component
+        // the instance of the formService is destroyed aswell so
+        // we may not need this method.
         this._controls = [];
         this._form = null;
     }
