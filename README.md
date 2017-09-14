@@ -343,6 +343,12 @@ The same approach must be followed for adding the validations (inside ```myConfi
 
 For more information see Wrapping a component.
 
+## Utils
+
+### MixinWithComposition
+
+__TODO__
+
 ## Wrapping a component
 
 __TODO__

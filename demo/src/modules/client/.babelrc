@@ -1,0 +1,15 @@
+{
+    "plugins": [
+        "transform-object-rest-spread"
+    ],
+    "presets": [
+        [
+            "env",
+            {
+                "modules": false
+            }
+        ],
+        "es2015-rollup",
+        "angular2"
+    ]
+}

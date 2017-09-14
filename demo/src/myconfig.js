@@ -39,34 +39,22 @@ const myValidations = {
     }
 };
 const myRoutes = [
-    // {
-    //     route: 'clients',
-    //     modulePath: 'http://localhost:8082/dist/demo_client.umd.js',
-    //     moduleName: 'ClientModule',
-    //     dependencies: [
-    //         {
-    //             modulePath: 'http://localhost:8081/dist/demo_bill.umd.js',
-    //             moduleName: 'BillModule'
-    //         },
-    //         {
-    //             modulePath: 'http://localhost:8083/dist/demo_payments.umd.js',
-    //             moduleName: 'PaymentsModule'
-    //         }
-    //     ]
-    // },
+    {
+        route: 'clients',
+        modulePath: 'http://localhost:8082/dist/demo_client.umd.js',
+        moduleName: 'ClientModule',
+        dependencies: [
+        ]
+    },
     {
         route: 'bills',
         modulePath: 'http://localhost:8081/dist/demo_bill.umd.js',
         moduleName: 'BillModule',
         dependencies: [
-            {
-                modulePath: 'http://localhost:8082/dist/demo_client.umd.js',
-                moduleName: 'ClientModule'
-            },
-            {
-                modulePath: 'http://localhost:8083/dist/demo_payments.umd.js',
-                moduleName: 'PaymentsModule'
-            }
+        //     {
+        //         modulePath: 'http://localhost:8082/dist/demo_client.umd.js',
+        //         moduleName: 'ClientModule'
+        //     }
         ]
     }
 ];

@@ -1,7 +1,6 @@
 import {Injectable, Compiler} from '@walas/angular-vendor';
 import {configService} from '../config';
 
-const SEPARATOR = '#';
 /**
  * Custom loader to lazy load modules via scripts. Routes
  * must be specified using the following pattern:
@@ -15,17 +14,38 @@ const SEPARATOR = '#';
 export class AfModuleLoader {
     constructor(compiler: Compiler) {
         this._compiler = compiler;
+        // this._promisesCache = [];
     }
     load(path) {
+        this._emptyPromiseCache();
         const {modulePath, moduleName, dependencies} = JSON.parse(path);
         const namespace = configService.namespace;
-        let missingDependencies = dependencies && dependencies
-            .filter((dependency) =>
-                this._isModuleMissing(dependency.moduleName, namespace)
-            );
-        if (missingDependencies && missingDependencies.length > 0) {
-            // TODO: handle missing dependencies Promise.all???
-        }
+        return this._createPromise(moduleName, modulePath, namespace);
+        /*
+        dependencies && dependencies.filter((dependency) =>
+            this._isModuleMissing(dependency.moduleName, namespace)
+        ).map((dependency) => {
+            this._promisesCache.push(
+                this._createPromise(
+                    dependency.moduleName,
+                    dependency.modulePath,
+                    namespace
+                ));
+        });
+        this._promisesCache.push(
+            this._createPromise(
+                moduleName,
+                modulePath,
+                namespace
+            ));
+        return Promise.all(this._promisesCache)
+            .then((ngFactoryModules) => ngFactoryModules)
+            .catch((error) => {
+                throw error;
+            });
+        */
+    }
+    _createPromise(moduleName, modulePath, namespace) {
         return new Promise((resolve, reject) => {
             let loadedModule = this._getModule(moduleName, namespace);
             if (loadedModule) {
@@ -51,6 +71,9 @@ export class AfModuleLoader {
             };
             document.head.appendChild(script);
         });
+    }
+    _emptyPromiseCache() {
+        this._promisesCache = [];
     }
     _getModule(moduleName, namespace) {
         return window && window[namespace] && window[namespace][moduleName];

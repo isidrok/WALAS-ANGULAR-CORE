@@ -2834,33 +2834,21 @@ var myValidations = {
         }]
     }
 };
-var myRoutes = [
-// {
-//     route: 'clients',
-//     modulePath: 'http://localhost:8082/dist/demo_client.umd.js',
-//     moduleName: 'ClientModule',
-//     dependencies: [
-//         {
-//             modulePath: 'http://localhost:8081/dist/demo_bill.umd.js',
-//             moduleName: 'BillModule'
-//         },
-//         {
-//             modulePath: 'http://localhost:8083/dist/demo_payments.umd.js',
-//             moduleName: 'PaymentsModule'
-//         }
-//     ]
-// },
-{
+var myRoutes = [{
+    route: 'clients',
+    modulePath: 'http://localhost:8082/dist/demo_client.umd.js',
+    moduleName: 'ClientModule',
+    dependencies: []
+}, {
     route: 'bills',
     modulePath: 'http://localhost:8081/dist/demo_bill.umd.js',
     moduleName: 'BillModule',
-    dependencies: [{
-        modulePath: 'http://localhost:8082/dist/demo_client.umd.js',
-        moduleName: 'ClientModule'
-    }, {
-        modulePath: 'http://localhost:8083/dist/demo_payments.umd.js',
-        moduleName: 'PaymentsModule'
-    }]
+    dependencies: [
+        //     {
+        //         modulePath: 'http://localhost:8082/dist/demo_client.umd.js',
+        //         moduleName: 'ClientModule'
+        //     }
+    ]
 }];
 
 var myConfig = {
@@ -2999,7 +2987,7 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 
 var DemoApp = (_dec = _walas_angularCore.Component({
     selector: 'demo-app',
-    template: '\n    <af-form #frm [onSubmit]="onSubmit">\n        <demo-input model="model.email" rule="foo.email" text="email"></demo-input>       \n        <demo-input model="model.password" text="password"></demo-input>   \n        <button type="submit">Submit</button>\n    </af-form>\n    <a routerLink="/bills">\n        Show Bills\n    </a>\n    <router-outlet></router-outlet>    \n    '
+    template: '\n    <af-form #frm [onSubmit]="onSubmit">\n        <demo-input model="model.email" rule="foo.email" text="email"></demo-input>       \n        <demo-input model="model.password" text="password"></demo-input>   \n        <button type="submit">Submit</button>\n    </af-form>\n    <a routerLink="/bills">\n        Show Bills\n    </a>\n    <a routerLink="/clients">\n        Show Clients\n    </a>\n    <router-outlet></router-outlet>    \n    '
 }), _dec2 = _walas_angularCore.ViewChild('frm'), _dec(_class = (_class2 = function DemoApp() {
     var _this = this;
 
@@ -3076,7 +3064,7 @@ var DemoInput = (_dec$1 = _walas_angularCore.Component({
     selector: 'demo-input',
     template: '\n        <div>\n            <input #inputElement type="text" #control=ngModel [ngModel]="getProp(target,prop)" (ngModelChange)="setProp(target,prop,$event)"\n                [attr.name]="name" [rule]="rule" [setValidity]="setValidity" />\n            <label>{{text}}</label>\n        </div>\n    '
 }), _dec2$1 = _walas_angularCore.Input(), _dec3 = _walas_angularCore.Input(), _dec4 = _walas_angularCore.ViewChild('control'), _dec5 = _walas_angularCore.ViewChild('inputElement'), _dec$1(_class$1 = (_class2$1 = function () {
-    function DemoInput(formService) {
+    function DemoInput(formService, ngZone) {
         var _this = this;
 
         classCallCheck(this, DemoInput);
@@ -3097,9 +3085,15 @@ var DemoInput = (_dec$1 = _walas_angularCore.Component({
             if (!_this.control.dirty) return;
             var validity = valid ? '' : 'invalid';
             _this.inputElement.nativeElement.setCustomValidity(validity);
+            if (!valid) {
+                _this._ngZone.runOutsideAngular(function () {
+                    return _this.setProp(_this.target, _this.prop, undefined);
+                });
+            }
         };
 
         this._formService = formService;
+        this._ngZone = ngZone;
     }
 
     createClass(DemoInput, [{
@@ -3140,7 +3134,7 @@ var DemoInput = (_dec$1 = _walas_angularCore.Component({
         return this.inputElement;
     }
 })), _class2$1)) || _class$1);
-Reflect.defineMetadata('design:paramtypes', [_walas_angularCore.FormService], DemoInput);
+Reflect.defineMetadata('design:paramtypes', [_walas_angularCore.FormService, _walas_angularCore.NgZone], DemoInput);
 
 var _dec$2;
 var _class$2;
@@ -3148,7 +3142,7 @@ var _class$2;
 var defaultRoutes = [{ path: '**', redirectTo: '/', pathMatch: 'full' }];
 
 var DemoModule = (_dec$2 = _walas_angularCore.NgModule({
-    imports: [_walas_angularCore.FormsModule, _walas_angularCore.BrowserModule, _walas_angularCore.WalasAngularCoreModule, _walas_angularCore.RouterModule.forRoot([].concat(toConsumableArray(_walas_angularCore.walasLoader.resolveRoutes(_walas_angularCore.configService.routes)), defaultRoutes), { useHash: true })],
+    imports: [_walas_angularCore.FormsModule, _walas_angularCore.BrowserModule, _walas_angularCore.WalasAngularCoreModule, _walas_angularCore.RouterModule.forRoot([].concat(toConsumableArray(_walas_angularCore.resolveRoutes(_walas_angularCore.configService.routes)), defaultRoutes), { useHash: true })],
     declarations: [DemoApp, DemoInput],
     providers: [_walas_angularCore.AfModuleLoaderProvider],
     bootstrap: [DemoApp]
@@ -3158,6 +3152,12 @@ var DemoModule = (_dec$2 = _walas_angularCore.NgModule({
 
 _walas_angularCore.enableProdMode();
 _walas_angularCore.platformBrowserDynamic().bootstrapModule(DemoModule);
+
+/**
+ * IMPORTANT: Load the configuration
+ * before the module or routes won't
+ * register!!
+ */
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

@@ -11,6 +11,9 @@ import {Component, ViewChild} from '@walas/angular-core';
     <a routerLink="/bills">
         Show Bills
     </a>
+    <a routerLink="/clients">
+        Show Clients
+    </a>
     <router-outlet></router-outlet>    
     `
 })

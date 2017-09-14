@@ -74027,12 +74027,13 @@ var AfModuleLoader = (_dec$3 = Injectable(), _dec$3(_class$3 = function () {
         classCallCheck(this, AfModuleLoader);
 
         this._compiler = compiler;
+        // this._promisesCache = [];
     }
 
     createClass$1(AfModuleLoader, [{
         key: 'load',
         value: function load(path) {
-            var _this = this;
+            this._emptyPromiseCache();
 
             var _JSON$parse = JSON.parse(path),
                 modulePath = _JSON$parse.modulePath,
@@ -74040,12 +74041,36 @@ var AfModuleLoader = (_dec$3 = Injectable(), _dec$3(_class$3 = function () {
                 dependencies = _JSON$parse.dependencies;
 
             var namespace = configService.namespace;
-            var missingDependencies = dependencies && dependencies.filter(function (dependency) {
-                return _this._isModuleMissing(dependency.moduleName, namespace);
+            return this._createPromise(moduleName, modulePath, namespace);
+            /*
+            dependencies && dependencies.filter((dependency) =>
+                this._isModuleMissing(dependency.moduleName, namespace)
+            ).map((dependency) => {
+                this._promisesCache.push(
+                    this._createPromise(
+                        dependency.moduleName,
+                        dependency.modulePath,
+                        namespace
+                    ));
             });
-            if (missingDependencies && missingDependencies.length > 0) {
-                // TODO: handle missing dependencies Promise.all???
-            }
+            this._promisesCache.push(
+                this._createPromise(
+                    moduleName,
+                    modulePath,
+                    namespace
+                ));
+            return Promise.all(this._promisesCache)
+                .then((ngFactoryModules) => ngFactoryModules)
+                .catch((error) => {
+                    throw error;
+                });
+            */
+        }
+    }, {
+        key: '_createPromise',
+        value: function _createPromise(moduleName, modulePath, namespace) {
+            var _this = this;
+
             return new Promise(function (resolve, reject) {
                 var loadedModule = _this._getModule(moduleName, namespace);
                 if (loadedModule) {
@@ -74070,6 +74095,11 @@ var AfModuleLoader = (_dec$3 = Injectable(), _dec$3(_class$3 = function () {
                 };
                 document.head.appendChild(script);
             });
+        }
+    }, {
+        key: '_emptyPromiseCache',
+        value: function _emptyPromiseCache() {
+            this._promisesCache = [];
         }
     }, {
         key: '_getModule',

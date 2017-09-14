@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild, FormService} from '@walas/angular-core';
+import {Component, Input, ViewChild, FormService, NgZone} from '@walas/angular-core';
 
 @Component({
     selector: 'demo-input',
@@ -18,8 +18,9 @@ export class DemoInput {
     target = null;
     prop = null;
     name = null;
-    constructor(formService: FormService) {
+    constructor(formService: FormService, ngZone: NgZone) {
         this._formService = formService;
+        this._ngZone = ngZone;
     }
     getProp(target, prop) {
         return target[prop];
@@ -31,6 +32,11 @@ export class DemoInput {
         if (!this.control.dirty) return;
         let validity = valid ? '' : 'invalid';
         this.inputElement.nativeElement.setCustomValidity(validity);
+        if (!valid) {
+            this._ngZone.runOutsideAngular(() =>
+                this.setProp(this.target, this.prop, undefined)
+            );
+        }
     }
     ngAfterViewInit() {
         this._formService.addControl(this.control, this.name);
